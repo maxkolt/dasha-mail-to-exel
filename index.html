@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style/style.css">
+    <title>Отчёт</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="wrap">
+        <label class="label-one">
+            <input id="campaign_id" placeholder="Введите id">
+        </label>
+        <button id="createTableByIdButton">
+            Создать таблицу
+        </button>
+    </div>
+    <div class="wrap">
+
+        <label>
+            <input id="start" placeholder="Начало даты">
+            <input id="end" placeholder="Конец даты">
+        </label>
+        <button id="createTableByDateButton">
+            Создать таблицу
+        </button>
+    </div>
+    <p id="error" class="error">
+        Ошибка! Некорректный диапазон.
+    </p>
+    <p id="error-id" class="error">
+        Ошибка! Некорректный ID.
+    </p>
+</div>
+
+<script defer src="js/index.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
+</body>
+</html>

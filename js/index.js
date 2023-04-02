@@ -82,7 +82,7 @@ if (createTableByIdButton) {
 
         if (member) {
           generated['Дополнительное поле'] = member['merge_1'] || ''
-          generated['Дополнительное поле'] = member['merge_2'] || ''
+          generated['Название рассылки'] = member['merge_2'] || ''
           generated['Дата мероприятия'] = member['merge_3'] || ''
           generated['Ф.И.О'] = member['merge_4'] || ''
           generated['Специализация'] = member['merge_5'] || ''
@@ -91,7 +91,7 @@ if (createTableByIdButton) {
           generated['Дополнительное поле'] = member['merge_8'] || ''
         } else {
           generated['Дополнительное поле'] = ''
-          generated['Дополнительное поле'] = ''
+          generated['Название рассылки'] = ''
           generated['Дата мероприятия'] = ''
           generated['Ф.И.О'] = ''
           generated['Специализация'] = ''
@@ -145,15 +145,15 @@ if (createTableByDateButton) {
       let start = document.getElementById('start').value
 
       const startDay = start.substring(0, 2)
-      const startMounth = start.substring(3, 5)
+      const startMouth = start.substring(3, 5)
       const startYear = start.substring(6, 10)
 
       const endDay = end.substring(0, 2)
-      const endMounth = end.substring(3, 5)
+      const endMouth = end.substring(3, 5)
       const endYear = end.substring(6, 10)
 
-      start = `${startYear}-${startMounth}-${startDay} 14:01:32`
-      end = `${endYear}-${endMounth}-${endDay} 14:01:32`
+      start = `${startYear}-${startMouth}-${startDay} 14:01:32`
+      end = `${endYear}-${endMouth}-${endDay} 14:01:32`
 
       const data = []
       const campaigns = (
@@ -194,7 +194,7 @@ if (createTableByDateButton) {
 
           if (member) {
             generated['Дополнительное поле'] = member['merge_1'] || ''
-            generated['Дополнительное поле'] = member['merge_2'] || ''
+            generated['Название рассылки'] = member['merge_2'] || ''
             generated['Дата мероприятия'] = member['merge_3'] || ''
             generated['Ф.И.О'] = member['merge_4'] || ''
             generated['Специализация'] = member['merge_5'] || ''
@@ -203,7 +203,7 @@ if (createTableByDateButton) {
             generated['Дополнительное поле'] = member['merge_8'] || ''
           } else {
             generated['Дополнительное поле'] = ''
-            generated['Дополнительное поле'] = ''
+            generated['Название рассылки'] = ''
             generated['Дата мероприятия'] = ''
             generated['Ф.И.О'] = ''
             generated['Специализация'] = ''

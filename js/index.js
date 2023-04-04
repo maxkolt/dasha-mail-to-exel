@@ -1,19 +1,19 @@
 const API_KEY = '8c73efe1a5f16f9905ab3fb18a9f7bf7'
 
 const getCampaignsById = (id) =>
-  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&campaign_id=${id}`
+  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&campaign_id=${id}&limit=1000000`
 
 const getCampaignsByDateRange = (from, to) =>
-  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&start=${from}&end=${to}`
+  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&start=${from}&end=${to}&limit=1000000`
 
 const getCampaigns = () =>
-  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}`
+  `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&limit=1000000`
 
 const reportsByCampaignId = (id) =>
-  `https://api.dashamail.ru/?method=reports.delivered&api_key=${API_KEY}&campaign_id=${id}`
+  `https://api.dashamail.ru/?method=reports.delivered&api_key=${API_KEY}&campaign_id=${id}&limit=1000000`
 
 const getMembersByListId = (id) =>
-  `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}`
+  `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}&limit=1000000`
 
 const errorContainer = document.getElementById('error')
 const errorIdContainer = document.getElementById('error-id')
@@ -81,26 +81,26 @@ if (createTableByIdButton) {
         generated['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
 
         if (member) {
-         // generated['Дополнительное поле'] = member['merge_1'] || ''
-          generated['Название рассылки'] = member['merge_2'] || ''
-          generated['Дата мероприятия'] = member['merge_3'] || ''
-          generated['Ф.И.О'] = member['merge_4'] || ''
-          generated['Специализация'] = member['merge_5'] || ''
-          generated['Округ'] = member['merge_6'] || ''
-          generated['Город'] = member['merge_7'] || ''
-          generated['Дополнительное поле'] = member['merge_8'] || ''
+          generated['Доп_поле1'] = member ['merge_1'] || ''
+          generated['Доп_поле2'] = member['merge_6'] || ''
+          generated['Доп_поле3'] = member['merge_4'] || ''
+          generated['Доп_поле4'] = member['merge_5'] || ''
+          generated['Доп_поле5'] = member['merge_3'] || ''
+          generated['Доп_поле6'] = member['merge_2'] || ''
+          generated['Доп_поле7'] = member['merge_7'] || ''
+          generated['Доп_поле8'] = member['merge_8'] || ''
         } else {
-         // generated['Дополнительное поле'] = ''
-          generated['Название рассылки'] = ''
-          generated['Дата мероприятия'] = ''
-          generated['Ф.И.О'] = ''
-          generated['Специализация'] = ''
-          generated['Округ'] = ''
-          generated['Город'] = ''
-          generated['Дополнительное поле'] = ''
+          generated['Доп_поле1'] = ''
+          generated['Доп_поле2'] = ''
+          generated['Доп_поле3'] = ''
+          generated['Доп_поле4'] = ''
+          generated['Доп_поле5'] = ''
+          generated['Доп_поле6'] = ''
+          generated['Доп_поле7'] = ''
+          generated['Доп_поле8'] = ''
         }
 
-        generated['utm_campaign'] = campaign['id']
+        generated['utm_campaign'] = campaign['analytics_tag']
         generated['utm_source'] = campaign['analytics_source']
         generated['utm_medium'] = campaign['analytics_medium']
         generated['utm_content'] = campaign['analytics_content']
@@ -186,33 +186,32 @@ if (createTableByDateButton) {
           if (mail.click_time !== '0000-00-00 00:00:00') {
             status = 'clicked'
           }
-
           generated['Дата отправки'] = mail.sent_time || ''
           generated['Статус'] = status || ''
           generated['Email'] = mail.email || ''
           generated['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
 
           if (member) {
-            //generated['Дополнительное поле'] = member['merge_1'] || ''
-            generated['Название рассылки'] = member['merge_2'] || ''
-            generated['Дата мероприятия'] = member['merge_3'] || ''
-            generated['Ф.И.О'] = member['merge_4'] || ''
-            generated['Специализация'] = member['merge_5'] || ''
-            generated['Округ'] = member['merge_6'] || ''
-            generated['Город'] = member['merge_7'] || ''
-            generated['Дополнительное поле'] = member['merge_8'] || ''
+            generated['Доп_поле1'] = member ['merge_1'] || ''
+            generated['Доп_поле2'] = member['merge_6'] || ''
+            generated['Доп_поле3'] = member['merge_4'] || ''
+            generated['Доп_поле4'] = member['merge_5'] || ''
+            generated['Доп_поле5'] = member['merge_3'] || ''
+            generated['Доп_поле6'] = member['merge_2'] || ''
+            generated['Доп_поле7'] = member['merge_7'] || ''
+            generated['Доп_поле8'] = member['merge_8'] || ''
           } else {
-            //generated['Дополнительное поле'] = ''
-            generated['Название рассылки'] = ''
-            generated['Дата мероприятия'] = ''
-            generated['Ф.И.О'] = ''
-            generated['Специализация'] = ''
-            generated['Округ'] = ''
-            generated['Город'] = ''
-            generated['Дополнительное поле'] = ''
+            generated['Доп_поле1'] = ''
+            generated['Доп_поле2'] = ''
+            generated['Доп_поле3'] = ''
+            generated['Доп_поле4'] = ''
+            generated['Доп_поле5'] = ''
+            generated['Доп_поле6'] = ''
+            generated['Доп_поле7'] = ''
+            generated['Доп_поле8'] = ''
           }
 
-          generated['utm_campaign'] = campaign['id']
+          generated['utm_campaign'] = campaign['analytics_tag']
           generated['utm_source'] = campaign['analytics_source']
           generated['utm_medium'] = campaign['analytics_medium']
           generated['utm_content'] = campaign['analytics_content']

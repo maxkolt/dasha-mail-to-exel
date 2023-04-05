@@ -33,19 +33,18 @@ const hideErrorId = () => {
 }
 
 const createTableByIdButton = document.getElementById('createTableByIdButton')
-const createTableByDateButton = document.getElementById(
-  'createTableByDateButton',
-)
+const createTableByDateButton = document.getElementById('createTableByDateButton')
+const preloader = document.getElementById('preloader')
 
 if (createTableByIdButton) {
   createTableByIdButton.onclick = async () => {
     try {
+      preloader.classList.remove('disabled')
       hideError()
       hideErrorId()
       createTableByIdButton.disabled = true
 
       const campaign_id = document.getElementById('campaign_id').value
-
       const campaign = (
         await (await fetch(getCampaignsById(campaign_id))).json()
       ).response.data[0]
@@ -126,8 +125,11 @@ if (createTableByIdButton) {
       XLSX.writeFile(wb, 'Отчёт.xlsx')
 
       createTableByIdButton.disabled = false
+      preloader.classList.add('disabled')
     } catch (error) {
       createTableByIdButton.disabled = false
+      preloader.classList.add('disabled')
+
       setErrorId()
     }
   }
@@ -136,9 +138,9 @@ if (createTableByIdButton) {
 if (createTableByDateButton) {
   createTableByDateButton.onclick = async () => {
     try {
+      preloader.classList.remove('disabled')
       hideError()
       hideErrorId()
-
       createTableByDateButton.disabled = true
 
       let end = document.getElementById('end').value
@@ -237,12 +239,15 @@ if (createTableByDateButton) {
       XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
       XLSX.writeFile(wb, 'Отчёт.xlsx')
 
+      preloader.classList.add('disabled')
       createTableByDateButton.disabled = false
     } catch (error) {
       setError()
+      preloader.classList.add('disabled')
       createTableByDateButton.disabled = false
     }
   }
+
   const clearInputIdButton = document.createElement('button')
   clearInputIdButton.innerHTML = 'Очистить'
   clearInputIdButton.id = 'clearInputId'
@@ -253,13 +258,13 @@ if (createTableByDateButton) {
 
   document.querySelector('.wrap').appendChild(clearInputIdButton)
   document.querySelectorAll('.wrap')[1].appendChild(clearInputDateButton)
-
   document.getElementById('clearInputId').onclick = () => {
     document.getElementById('campaign_id').value = ''
   }
-
   document.getElementById('clearInputDate').onclick = () => {
     document.getElementById('start').value = ''
     document.getElementById('end').value = ''
   }
 }
+
+

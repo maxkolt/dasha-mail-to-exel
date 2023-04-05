@@ -27,10 +27,6 @@ body {
     gap: 15px;
 }
 
-a {
-    color: #9e9e9e;
-}
-
 label {
     display: flex;
     flex-direction: column;
@@ -74,7 +70,7 @@ button:disabled {
 }
 
 #campaign_id {
-    padding: 10px 110px;
+    padding: 10px 120px;
 }
 
 #clearInputDate {
@@ -85,8 +81,9 @@ button:disabled {
     color: #e79c9c;
 }
 
-
-
+.disabled {
+    visibility: hidden;
+}
 
 
 

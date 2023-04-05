@@ -247,7 +247,6 @@ if (createTableByDateButton) {
       createTableByDateButton.disabled = false
     }
   }
-
   const clearInputIdButton = document.createElement('button')
   clearInputIdButton.innerHTML = 'Очистить'
   clearInputIdButton.id = 'clearInputId'

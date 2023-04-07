@@ -10,7 +10,7 @@ const getCampaigns = () =>
   `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&limit=1000000`
 
 const reportsByCampaignId = (id) =>
-  `https://api.dashamail.ru/?method=reports.delivered&api_key=${API_KEY}&campaign_id=${id}&limit=1000000`
+  `https://api.dashamail.ru/?method=reports.sent&api_key=${API_KEY}&campaign_id=${id}&limit=1000000`
 
 const getMembersByListId = (id) =>
   `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}&limit=1000000`
@@ -67,7 +67,6 @@ if (createTableByIdButton) {
         const member = members.find((m) => m.id === mail.member_id)
 
         let status = 'delivered'
-
         if (mail.open_time !== '0000-00-00 00:00:00') {
           status = 'opened'
         }
@@ -143,8 +142,9 @@ if (createTableByDateButton) {
       hideErrorId()
       createTableByDateButton.disabled = true
 
-      let end = document.getElementById('end').value
+
       let start = document.getElementById('start').value
+      let end = document.getElementById('end').value
 
       const startDay = start.substring(0, 2)
       const startMouth = start.substring(3, 5)
@@ -154,8 +154,10 @@ if (createTableByDateButton) {
       const endMouth = end.substring(3, 5)
       const endYear = end.substring(6, 10)
 
-      start = `${startYear}-${startMouth}-${startDay} 14:01:32`
-      end = `${endYear}-${endMouth}-${endDay} 14:01:32`
+      let newEndDay = parseInt(endDay) + 1;
+
+      start = `${startYear}-${startMouth}-${startDay}`
+      end = `${endYear}-${endMouth}-${newEndDay}`
 
       const data = []
       const campaigns = (
@@ -180,8 +182,8 @@ if (createTableByDateButton) {
           const generated = {}
 
           const member = members.find((m) => m.id === mail.member_id)
-          let status = 'delivered'
 
+          let status = 'delivered'
           if (mail.open_time !== '0000-00-00 00:00:00') {
             status = 'opened'
           }

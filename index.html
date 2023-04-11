@@ -12,34 +12,35 @@
 </head>
 <body>
 <div class="container">
-    <img src="style/preloader.svg" id="preloader" class="disabled">
-    <div class="wrap">
+    <img src="style/preloader.svg" id="preloader" class="disabled" alt="svg">
+
+    <form class="wrap">
         <label class="label-one">
-            <input id="campaign_id" placeholder="отчет ID">
+            <input id="campaign_id" placeholder="отчёт ID">
         </label>
         <button id="createTableByIdButton">
-            Создать таблицу
+            Построить отчёт
         </button>
-    </div>
+    </form>
 
-    <div class="wrap">
-        <label>
-            <input id="start" placeholder="отчет с: дд-мм-гггг">
-            <input id="end" placeholder="отчет по: дд-мм-гггг ">
+    <form class="wrap">
+        <label class="label-one">
+            <input id="start" placeholder="отчёт с: дд-мм-гггг">
+            <input id="end" placeholder="отчёт по: дд-мм-гггг ">
         </label>
         <button id="createTableByDateButton">
-            Создать таблицу
+            Построить отчёт
         </button>
-    </div>
+    </form>
 
-    <p id="error" class="error">
-        Ошибка! Некорректный диапазон.
-    </p>
     <p id="error-id" class="error">
-        Ошибка! Некорректный ID.
+        ОШИБКА! Некорректный ID.
+    </p>
+    <p id="error" class="error">
+        ОШИБКА! Некорректный диапазон дат.
     </p>
 </div>
-<script defer src="js/index.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
+<script defer src="js/index.js"></script>
 </body>
 </html>

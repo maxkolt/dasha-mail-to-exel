@@ -1,17 +1,16 @@
 const API_KEY = '8c73efe1a5f16f9905ab3fb18a9f7bf7'
-
 const getCampaignsById = (id) =>
   `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&campaign_id=${id}&limit=1000000`
-
 const getCampaignsByDateRange = (from, to) =>
   `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&format=json&start=${from}&end=${to}&limit=1000000`
-
 const getCampaigns = () =>
   `https://api.dashamail.ru/?method=campaigns.get&api_key=${API_KEY}&limit=1000000`
-
 const reportsByCampaignId = (id) =>
   `https://api.dashamail.ru/?method=reports.sent&api_key=${API_KEY}&campaign_id=${id}&limit=1000000`
-
+const reportsUnsubscribedByCampaignId = (id) =>
+  `https://api.dashamail.ru/?method=reports.unsubscribed&api_key=${API_KEY}&campaign_id=${id}&limit=1000000&time_start`
+const reportsBouncedByCampaignId = (id) =>
+  `https://api.dashamail.ru/?method=reports.bounced&api_key=${API_KEY}&campaign_id=${id}&limit=1000000&time_start`
 const getMembersByListId = (id) =>
   `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}&limit=1000000`
 
@@ -45,68 +44,76 @@ if (createTableByIdButton) {
       createTableByIdButton.disabled = true
 
       const campaign_id = document.getElementById('campaign_id').value
-      const campaign = (
-        await (await fetch(getCampaignsById(campaign_id))).json()
-      ).response.data[0]
+
+      const campaign = (await (await fetch(getCampaignsById(campaign_id))).json()).response.data[0]
 
       const list_id = campaign['list_id']
         .match(/:\d+;/g)
         .pop()
         .substring(1, campaign['list_id'].match(/:\d+;/g).pop().length - 1)
 
-      const mails = (
-        await (await fetch(reportsByCampaignId(campaign_id))).json()
-      ).response.data
+      const mails = (await (await fetch(reportsByCampaignId(campaign_id))).json()).response.data
 
-      const members = (await (await fetch(getMembersByListId(list_id))).json())
-        .response.data
+      const mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign_id))).json()).response.data
 
-      const data = mails.map((mail) => {
-        const generated = {}
+      const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign_id))).json()).response.data
 
-        const member = members.find((m) => m.id === mail.member_id)
+      const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
 
-        let status = 'delivered'
+      let data = mails.map((mail) => {
+        const generatedID= {}
+
+        const member = members.find((m) => m.email === mail.email)
+        const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email)
+        const mailBounced = mailsBounced.find((m) => m.email === mail.email)
+
+        let status = 'sent'
+        if (mail.sent_time !== '0000-00-00 00:00:00') {
+          status = 'delivered'
+        }
         if (mail.open_time !== '0000-00-00 00:00:00') {
           status = 'opened'
         }
         if (mail.click_time !== '0000-00-00 00:00:00') {
           status = 'clicked'
         }
-        generated['Дата отправки'] = mail.sent_time || ''
-        generated['Статус'] = status || ''
-        generated['Email'] = mail.email || ''
-        generated['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
+        if (mailUnsubscribed) status = 'unsubscribed'
+        if (mailBounced) status = 'bounced'
+
+        generatedID['Дата отправки'] = mail.sent_time || ''
+        generatedID['Статус'] = status || ''
+        generatedID['Email'] = mail.email || ''
+        generatedID['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
 
         if (member) {
-          generated['Доп_поле1'] = member ['merge_1'] || ''
-          generated['Доп_поле2'] = member['merge_6'] || ''
-          generated['Доп_поле3'] = member['merge_4'] || ''
-          generated['Доп_поле4'] = member['merge_5'] || ''
-          generated['Доп_поле5'] = member['merge_3'] || ''
-          generated['Доп_поле6'] = member['merge_2'] || ''
-          generated['Доп_поле7'] = member['merge_7'] || ''
-          generated['Доп_поле8'] = member['merge_8'] || ''
+          generatedID['Доп_поле1'] = member ['merge_1'] || ''
+          generatedID['Доп_поле2'] = member['merge_6'] || ''
+          generatedID['Доп_поле3'] = member['merge_4'] || ''
+          generatedID['Доп_поле4'] = member['merge_5'] || ''
+          generatedID['Доп_поле5'] = member['merge_3'] || ''
+          generatedID['Доп_поле6'] = member['merge_2'] || ''
+          generatedID['Доп_поле7'] = member['merge_7'] || ''
+          generatedID['Доп_поле8'] = member['merge_8'] || ''
         } else {
-          generated['Доп_поле1'] = ''
-          generated['Доп_поле2'] = ''
-          generated['Доп_поле3'] = ''
-          generated['Доп_поле4'] = ''
-          generated['Доп_поле5'] = ''
-          generated['Доп_поле6'] = ''
-          generated['Доп_поле7'] = ''
-          generated['Доп_поле8'] = ''
+          generatedID['Доп_поле1'] = ''
+          generatedID['Доп_поле2'] = ''
+          generatedID['Доп_поле3'] = ''
+          generatedID['Доп_поле4'] = ''
+          generatedID['Доп_поле5'] = ''
+          generatedID['Доп_поле6'] = ''
+          generatedID['Доп_поле7'] = ''
+          generatedID['Доп_поле8'] = ''
         }
 
-        generated['utm_campaign'] = campaign['analytics_tag']
-        generated['utm_source'] = campaign['analytics_source']
-        generated['utm_medium'] = campaign['analytics_medium']
-        generated['utm_content'] = campaign['analytics_content']
+        generatedID['utm_campaign'] = campaign['analytics_tag']
+        generatedID['utm_source'] = campaign['analytics_source']
+        generatedID['utm_medium'] = campaign['analytics_medium']
+        generatedID['utm_content'] = campaign['analytics_content']
 
-        return generated
+        return generatedID
       })
 
-      const width = []
+      const widthID = []
 
       for (let [key, value] of Object.entries(data[0])) {
         let biggest = 0
@@ -114,10 +121,10 @@ if (createTableByIdButton) {
           if (elem[key] && elem[key].length + 5 > biggest)
             biggest = elem[key].length + 5
         })
-        width.push({width: biggest})
+        widthID.push({width: biggest})
       }
       const ws = XLSX.utils.json_to_sheet(data)
-      ws['!cols'] = width
+      ws['!cols'] = widthID
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
@@ -170,61 +177,66 @@ if (createTableByDateButton) {
           .pop()
           .substring(1, campaign['list_id'].match(/:\d+;/g).pop().length - 1)
 
-        const mails = (
-          await (await fetch(reportsByCampaignId(campaign.id))).json()
-        ).response.data
-
-        const members = (
-          await (await fetch(getMembersByListId(list_id))).json()
-        ).response.data
+        const mails = (await (await fetch(reportsByCampaignId(campaign.id))).json()).response.data
+        let mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign.id))).json()).response.data
+        const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign.id))).json()).response.data
+        const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
 
         mails.forEach((mail) => {
-          const generated = {}
+          const generatedDate = {}
 
-          const member = members.find((m) => m.id === mail.member_id)
+          const member = members.find((m) => m.email === mail.email)
+          const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email,)
+          let mailBounced = mailsBounced.find((m) => m.email === mail.email)
 
-          let status = 'delivered'
+          let status = 'sent'
+          if (mail.sent_time !== '0000-00-00 00:00:00') {
+            status = 'delivered'
+          }
           if (mail.open_time !== '0000-00-00 00:00:00') {
             status = 'opened'
           }
           if (mail.click_time !== '0000-00-00 00:00:00') {
             status = 'clicked'
           }
-          generated['Дата отправки'] = mail.sent_time || ''
-          generated['Статус'] = status || ''
-          generated['Email'] = mail.email || ''
-          generated['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
+          if (mailUnsubscribed) status = 'unsubscribed'
+          if (mailBounced) status = 'bounced'
+
+          generatedDate['Дата отправки'] = mail.sent_time || ''
+          generatedDate['Статус'] = status || ''
+          generatedDate['Email'] = mail.email || ''
+          generatedDate['Время прочтения'] = mail.open_time || '0000-00-00 00:00:00'
 
           if (member) {
-            generated['Доп_поле1'] = member ['merge_1'] || ''
-            generated['Доп_поле2'] = member['merge_6'] || ''
-            generated['Доп_поле3'] = member['merge_4'] || ''
-            generated['Доп_поле4'] = member['merge_5'] || ''
-            generated['Доп_поле5'] = member['merge_3'] || ''
-            generated['Доп_поле6'] = member['merge_2'] || ''
-            generated['Доп_поле7'] = member['merge_7'] || ''
-            generated['Доп_поле8'] = member['merge_8'] || ''
+            generatedDate['Доп_поле1'] = member ['merge_1'] || ''
+            generatedDate['Доп_поле2'] = member['merge_6'] || ''
+            generatedDate['Доп_поле3'] = member['merge_4'] || ''
+            generatedDate['Доп_поле4'] = member['merge_5'] || ''
+            generatedDate['Доп_поле5'] = member['merge_3'] || ''
+            generatedDate['Доп_поле6'] = member['merge_2'] || ''
+            generatedDate['Доп_поле7'] = member['merge_7'] || ''
+            generatedDate['Доп_поле8'] = member['merge_8'] || ''
           } else {
-            generated['Доп_поле1'] = ''
-            generated['Доп_поле2'] = ''
-            generated['Доп_поле3'] = ''
-            generated['Доп_поле4'] = ''
-            generated['Доп_поле5'] = ''
-            generated['Доп_поле6'] = ''
-            generated['Доп_поле7'] = ''
-            generated['Доп_поле8'] = ''
+            generatedDate['Доп_поле1'] = ''
+            generatedDate['Доп_поле2'] = ''
+            generatedDate['Доп_поле3'] = ''
+            generatedDate['Доп_поле4'] = ''
+            generatedDate['Доп_поле5'] = ''
+            generatedDate['Доп_поле6'] = ''
+            generatedDate['Доп_поле7'] = ''
+            generatedDate['Доп_поле8'] = ''
           }
 
-          generated['utm_campaign'] = campaign['analytics_tag']
-          generated['utm_source'] = campaign['analytics_source']
-          generated['utm_medium'] = campaign['analytics_medium']
-          generated['utm_content'] = campaign['analytics_content']
+          generatedDate['utm_campaign'] = campaign['analytics_tag']
+          generatedDate['utm_source'] = campaign['analytics_source']
+          generatedDate['utm_medium'] = campaign['analytics_medium']
+          generatedDate['utm_content'] = campaign['analytics_content']
 
-          data.push(generated)
+          data.push(generatedDate)
         })
       }
 
-      const width = []
+      const widthDate = []
 
       for (let [key, value] of Object.entries(data[0])) {
         let biggest = 0
@@ -232,10 +244,10 @@ if (createTableByDateButton) {
           if (elem[key] && elem[key].length + 5 > biggest)
             biggest = elem[key].length + 5
         })
-        width.push({width: biggest})
+        widthDate.push({width: biggest})
       }
       const ws = XLSX.utils.json_to_sheet(data)
-      ws['!cols'] = width
+      ws['!cols'] = widthDate
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
@@ -249,23 +261,35 @@ if (createTableByDateButton) {
       createTableByDateButton.disabled = false
     }
   }
-  const clearInputIdButton = document.createElement('button')
-  clearInputIdButton.innerHTML = 'Очистить'
-  clearInputIdButton.id = 'clearInputId'
 
-  const clearInputDateButton = document.createElement('button')
-  clearInputDateButton.innerHTML = 'Очистить'
-  clearInputDateButton.id = 'clearInputDate'
+  const clearInputIdButton = document.createElement('button');
+  clearInputIdButton.innerHTML = 'Очистить';
+  clearInputIdButton.id = 'clearInputId';
 
-  document.querySelector('.wrap').appendChild(clearInputIdButton)
-  document.querySelectorAll('.wrap')[1].appendChild(clearInputDateButton)
-  document.getElementById('clearInputId').onclick = () => {
-    document.getElementById('campaign_id').value = ''
-  }
-  document.getElementById('clearInputDate').onclick = () => {
-    document.getElementById('start').value = ''
-    document.getElementById('end').value = ''
-  }
+  const clearInputDateButton = document.createElement('button');
+  clearInputDateButton.innerHTML = 'Очистить';
+  clearInputDateButton.id = 'clearInputDate';
+
+  document.querySelector('.wrap').appendChild(clearInputIdButton);
+  document.querySelectorAll('.wrap')[1].appendChild(clearInputDateButton);
+
+  const handleClearInputId = () => {
+    document.getElementById('campaign_id').value = '';
+  };
+
+  const handleClearInputDate = () => {
+    document.getElementById('start').value = '';
+    document.getElementById('end').value = '';
+  };
+
+  document.getElementById('clearInputId').addEventListener('click', (event) => {
+    event.preventDefault();
+    handleClearInputId();
+  });
+
+  document.getElementById('clearInputDate').addEventListener('click', (event) => {
+    event.preventDefault();
+    handleClearInputDate();
+  });
 }
-
 

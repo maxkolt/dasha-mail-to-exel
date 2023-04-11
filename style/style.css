@@ -27,7 +27,7 @@ body {
     gap: 15px;
 }
 
-label {
+.label-one {
     display: flex;
     flex-direction: column;
     align-items: center;

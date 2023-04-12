@@ -61,7 +61,7 @@ if (createTableByIdButton) {
       const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
 
       let data = mails.map((mail) => {
-        const generatedID= {}
+        const generatedID = {}
 
         const member = members.find((m) => m.email === mail.email)
         const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email)
@@ -128,7 +128,7 @@ if (createTableByIdButton) {
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
-      XLSX.writeFile(wb, 'Отчёт.xlsx')
+      XLSX.writeFile(wb, 'Отчёт по ID.xlsx')
 
       createTableByIdButton.disabled = false
       preloader.classList.add('disabled')
@@ -251,7 +251,7 @@ if (createTableByDateButton) {
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
-      XLSX.writeFile(wb, 'Отчёт.xlsx')
+      XLSX.writeFile(wb, 'Отчёт по дате.xlsx')
 
       preloader.classList.add('disabled')
       createTableByDateButton.disabled = false

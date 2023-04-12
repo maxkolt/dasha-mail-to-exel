@@ -127,7 +127,7 @@ if (createTableByIdButton) {
       ws['!cols'] = widthID
 
       const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
+      XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по ID')
       XLSX.writeFile(wb, 'Отчёт по ID.xlsx')
 
       createTableByIdButton.disabled = false
@@ -250,7 +250,7 @@ if (createTableByDateButton) {
       ws['!cols'] = widthDate
 
       const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по рассылкам')
+      XLSX.utils.book_append_sheet(wb, ws, 'Отчёт по дате')
       XLSX.writeFile(wb, 'Отчёт по дате.xlsx')
 
       preloader.classList.add('disabled')

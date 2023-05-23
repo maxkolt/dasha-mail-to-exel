@@ -14,7 +14,7 @@ const reportsBouncedByCampaignId = (id) =>
 const getMembersByListId = (id) =>
   `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}&limit=1000000`
 const getComplainedEvents = (id) =>
-  `https://api.dashamail.ru/?method=reports.events&api_key=${API_KEY}&campaign_id=${id}&event_type=COMPLAINED&limit=1000000&time_start=2020-01-01 00:00:00`
+  `https://api.dashamail.ru/?method=reports.events&api_key=${API_KEY}&campaign_id=${id}&event_type=COMPLAINED&limit=1000000&time_start`
 
 const errorContainer = document.getElementById('error')
 const errorIdContainer = document.getElementById('error-id')
@@ -55,13 +55,9 @@ if (createTableByIdButton) {
         .substring(1, campaign['list_id'].match(/:\d+;/g).pop().length - 1)
 
       const mails = (await (await fetch(reportsByCampaignId(campaign_id))).json()).response.data
-
       const mailsComplained = (await (await fetch(getComplainedEvents(campaign_id))).json()).response.data
-
       const mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign_id))).json()).response.data
-
       const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign_id))).json()).response.data
-
       const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
 
       let data = mails.map((mail) => {
@@ -73,15 +69,9 @@ if (createTableByIdButton) {
         const mailComplained = mailsComplained.find((m) => m.email === mail.email)
 
         let status = 'sent'
-        if (mail.sent_time !== '0000-00-00 00:00:00') {
-          status = 'delivered'
-        }
-        if (mail.open_time !== '0000-00-00 00:00:00') {
-          status = 'opened'
-        }
-        if (mail.click_time !== '0000-00-00 00:00:00') {
-          status = 'clicked'
-        }
+        if (mail.sent_time !== '0000-00-00 00:00:00') {status = 'delivered'}
+        if (mail.open_time !== '0000-00-00 00:00:00') {status = 'opened'}
+        if (mail.click_time !== '0000-00-00 00:00:00') {status = 'clicked'}
         if (mailUnsubscribed) status = 'unsubscribed'
         if (mailBounced) status = 'bounced'
         if (mailComplained) status = 'complained'
@@ -184,7 +174,7 @@ if (createTableByDateButton) {
           .substring(1, campaign['list_id'].match(/:\d+;/g).pop().length - 1)
 
         const mails = (await (await fetch(reportsByCampaignId(campaign.id))).json()).response.data
-        let mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign.id))).json()).response.data
+        const mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign.id))).json()).response.data
         const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign.id))).json()).response.data
         const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
         //const mailsComplained = (await (await fetch(getComplainedEvents(campaign_id))).json()).response.data
@@ -195,18 +185,12 @@ if (createTableByDateButton) {
           const member = members.find((m) => m.email === mail.email)
           const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email,)
           const mailBounced = mailsBounced.find((m) => m.email === mail.email)
-         // const mailComplained = mailsComplained.find((m) => m.email === mail.email)
+         //const mailComplained = mailsComplained.find((m) => m.email === mail.email)
 
           let status = 'sent'
-          if (mail.sent_time !== '0000-00-00 00:00:00') {
-            status = 'delivered'
-          }
-          if (mail.open_time !== '0000-00-00 00:00:00') {
-            status = 'opened'
-          }
-          if (mail.click_time !== '0000-00-00 00:00:00') {
-            status = 'clicked'
-          }
+          if (mail.sent_time !== '0000-00-00 00:00:00') {status = 'delivered'}
+          if (mail.open_time !== '0000-00-00 00:00:00') {status = 'opened'}
+          if (mail.click_time !== '0000-00-00 00:00:00') {status = 'clicked'}
           if (mailUnsubscribed) status = 'unsubscribed'
           if (mailBounced) status = 'bounced'
           //if (mailComplained) status = 'complained'

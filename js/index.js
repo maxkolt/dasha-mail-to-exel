@@ -13,6 +13,8 @@ const reportsBouncedByCampaignId = (id) =>
   `https://api.dashamail.ru/?method=reports.bounced&api_key=${API_KEY}&campaign_id=${id}&limit=1000000&time_start`
 const getMembersByListId = (id) =>
   `https://api.dashamail.ru/?method=lists.get_members&api_key=${API_KEY}&list_id=${id}&limit=1000000`
+const getComplainedEvents = (id) =>
+  `https://api.dashamail.ru/?method=reports.events&api_key=${API_KEY}&campaign_id=${id}&event_type=COMPLAINED&limit=1000000&time_start=2020-01-01 00:00:00`
 
 const errorContainer = document.getElementById('error')
 const errorIdContainer = document.getElementById('error-id')
@@ -54,6 +56,8 @@ if (createTableByIdButton) {
 
       const mails = (await (await fetch(reportsByCampaignId(campaign_id))).json()).response.data
 
+      const mailsComplained = (await (await fetch(getComplainedEvents(campaign_id))).json()).response.data
+
       const mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign_id))).json()).response.data
 
       const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign_id))).json()).response.data
@@ -66,6 +70,7 @@ if (createTableByIdButton) {
         const member = members.find((m) => m.email === mail.email)
         const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email)
         const mailBounced = mailsBounced.find((m) => m.email === mail.email)
+        const mailComplained = mailsComplained.find((m) => m.email === mail.email)
 
         let status = 'sent'
         if (mail.sent_time !== '0000-00-00 00:00:00') {
@@ -79,6 +84,7 @@ if (createTableByIdButton) {
         }
         if (mailUnsubscribed) status = 'unsubscribed'
         if (mailBounced) status = 'bounced'
+        if (mailComplained) status = 'complained'
 
         generatedID['Дата отправки'] = mail.sent_time || ''
         generatedID['Статус'] = status || ''
@@ -181,13 +187,15 @@ if (createTableByDateButton) {
         let mailsUnsubscribed = (await (await fetch(reportsUnsubscribedByCampaignId(campaign.id))).json()).response.data
         const mailsBounced = (await (await fetch(reportsBouncedByCampaignId(campaign.id))).json()).response.data
         const members = (await (await fetch(getMembersByListId(list_id))).json()).response.data
+        //const mailsComplained = (await (await fetch(getComplainedEvents(campaign_id))).json()).response.data
 
         mails.forEach((mail) => {
           const generatedDate = {}
 
           const member = members.find((m) => m.email === mail.email)
           const mailUnsubscribed = mailsUnsubscribed.find((m) => m.email === mail.email,)
-          let mailBounced = mailsBounced.find((m) => m.email === mail.email)
+          const mailBounced = mailsBounced.find((m) => m.email === mail.email)
+         // const mailComplained = mailsComplained.find((m) => m.email === mail.email)
 
           let status = 'sent'
           if (mail.sent_time !== '0000-00-00 00:00:00') {
@@ -201,6 +209,7 @@ if (createTableByDateButton) {
           }
           if (mailUnsubscribed) status = 'unsubscribed'
           if (mailBounced) status = 'bounced'
+          //if (mailComplained) status = 'complained'
 
           generatedDate['Дата отправки'] = mail.sent_time || ''
           generatedDate['Статус'] = status || ''
